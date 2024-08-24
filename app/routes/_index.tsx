@@ -145,7 +145,7 @@ const LandingPage = () => {
                 <Github className="mr-2 h-5 w-5" /> Explore Projects
               </a>
               <Link
-                to="/blog"
+                to="https://blog.theenthusiast.dev"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
               >
                 <BookOpen className="mr-2 h-5 w-5" /> Read Our Blog
