@@ -29,14 +29,21 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       {/* Navigation */}
       <nav className="bg-gray-950 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold text-white">
-                The Enthusiast
+              <Link to="/" className="flex items-center">
+                <img
+                  src="/the-enthusiast-logo.png"
+                  alt="The Enthusiast Logo"
+                  className="h-8 w-auto mr-2"
+                />
+                <span className="text-2xl font-bold text-white">
+                  The Enthusiast
+                </span>
               </Link>
             </div>
             <div className="hidden md:flex space-x-1">
@@ -118,111 +125,114 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Hero Section */}
-      <header className="bg-gray-900">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="md:w-1/2 mb-8 md:mb-0"
-          >
-            <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
-              Empowering Privacy Through{" "}
-              <span className="text-indigo-500">Open Source</span>
-            </h1>
-            <p className="mt-3 text-xl text-gray-300 sm:mt-5 sm:max-w-xl">
-              We build transparent, secure, and community-driven web
-              applications to protect your digital rights.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
-              <a
-                href="https://github.com/The-Enthusiast-404"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                <Github className="mr-2 h-5 w-5" /> Explore Projects
-              </a>
-              <Link
-                to="https://blog.theenthusiast.dev"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
-              >
-                <BookOpen className="mr-2 h-5 w-5" /> Read Our Blog
-              </Link>
+      {/* Main content wrapper */}
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <header className="bg-gray-900">
+          <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="md:w-1/2 mb-8 md:mb-0"
+            >
+              <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                Empowering Privacy Through{" "}
+                <span className="text-indigo-500">Open Source</span>
+              </h1>
+              <p className="mt-3 text-xl text-gray-300 sm:mt-5 sm:max-w-xl">
+                We build transparent, secure, and community-driven web
+                applications to protect your digital rights.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
+                <a
+                  href="https://github.com/The-Enthusiast-404"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  <Github className="mr-2 h-5 w-5" /> Explore Projects
+                </a>
+                <Link
+                  to="https://blog.theenthusiast.dev"
+                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
+                >
+                  <BookOpen className="mr-2 h-5 w-5" /> Read Our Blog
+                </Link>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="md:w-1/2 flex justify-center"
+            >
+              <div className="w-64 h-64 relative">
+                <div className="absolute inset-0 bg-indigo-500 rounded-full opacity-20 animate-pulse"></div>
+                <div className="absolute inset-2 bg-indigo-600 rounded-full opacity-40 animate-pulse animation-delay-1000"></div>
+                <div className="absolute inset-4 bg-indigo-700 rounded-full opacity-60 animate-pulse animation-delay-2000"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Lock className="h-24 w-24 text-white" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </header>
+
+        {/* Features Section */}
+        <section className="py-20 bg-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center mb-12 text-white">
+              Our Core Principles
+            </h2>
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex flex-col items-center text-center cursor-pointer group"
+                >
+                  <div className="flex items-center justify-center h-16 w-16 rounded-md bg-indigo-500 text-white mb-4 group-hover:bg-indigo-600 transition-colors duration-300">
+                    <feature.icon className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 text-indigo-300 group-hover:text-indigo-400 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                    {feature.description}
+                  </p>
+                </motion.div>
+              ))}
             </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="md:w-1/2 flex justify-center"
-          >
-            <div className="w-64 h-64 relative">
-              <div className="absolute inset-0 bg-indigo-500 rounded-full opacity-20 animate-pulse"></div>
-              <div className="absolute inset-2 bg-indigo-600 rounded-full opacity-40 animate-pulse animation-delay-1000"></div>
-              <div className="absolute inset-4 bg-indigo-700 rounded-full opacity-60 animate-pulse animation-delay-2000"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Lock className="h-24 w-24 text-white" />
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="bg-indigo-900">
+          <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <span className="block">
+                Ready to take control of your digital privacy?
+              </span>
+              <span className="block text-indigo-300">
+                Join our open-source revolution today.
+              </span>
+            </h2>
+            <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+              <div className="inline-flex rounded-md shadow">
+                <Link
+                  to="/get-started"
+                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
+                >
+                  Get Started
+                </Link>
               </div>
             </div>
-          </motion.div>
-        </div>
-      </header>
-
-      {/* Features Section */}
-      <section className="py-20 bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-white">
-            Our Core Principles
-          </h2>
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex flex-col items-center text-center cursor-pointer group"
-              >
-                <div className="flex items-center justify-center h-16 w-16 rounded-md bg-indigo-500 text-white mb-4 group-hover:bg-indigo-600 transition-colors duration-300">
-                  <feature.icon className="h-8 w-8" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-2 text-indigo-300 group-hover:text-indigo-400 transition-colors duration-300">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-indigo-900">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            <span className="block">
-              Ready to take control of your digital privacy?
-            </span>
-            <span className="block text-indigo-300">
-              Join our open-source revolution today.
-            </span>
-          </h2>
-          <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
-            <div className="inline-flex rounded-md shadow">
-              <Link
-                to="/get-started"
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="bg-gray-950">

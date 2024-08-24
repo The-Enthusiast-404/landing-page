@@ -67,3 +67,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+html,
+body {
+  min-height: 100%;
+  background-color: #111827; /* This is the same as bg-gray-900 */
+}
