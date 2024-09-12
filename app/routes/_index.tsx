@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Terminal, Globe, Moon, Sun, Volume2, VolumeX } from "lucide-react";
+import {
+  Terminal,
+  Globe,
+  Moon,
+  Sun,
+  Volume2,
+  VolumeX,
+  Minimize2,
+  Maximize2,
+  X,
+} from "lucide-react";
+import Draggable from "react-draggable";
 
 const themes = {
   dark: {
@@ -37,6 +48,10 @@ const RetroStripeLandingPage = () => {
   const [bootMessage, setBootMessage] = useState(
     "Initializing RetroStripe Core..."
   );
+  const [glitchEffect, setGlitchEffect] = useState(false);
+  const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
+  const [consolePosition, setConsolePosition] = useState({ x: 20, y: 20 });
+  const [consoleSize, setConsoleSize] = useState({ width: 500, height: 300 });
   const audioRef = useRef(null);
   const terminalRef = useRef(null);
 
@@ -57,17 +72,24 @@ const RetroStripeLandingPage = () => {
       setTimeout(() => {
         setBootMessage(step.message);
         setBootProgress(((index + 1) / bootSequence.length) * 100);
+        setGlitchEffect(true);
+        setTimeout(() => setGlitchEffect(false), 150);
       }, totalDuration);
       totalDuration += step.duration;
     });
 
     setTimeout(() => setIsBooting(false), totalDuration + 500);
 
+    const glitchInterval = setInterval(() => {
+      setGlitchEffect(true);
+      setTimeout(() => setGlitchEffect(false), 50 + Math.random() * 100);
+    }, 2000 + Math.random() * 3000);
+
     return () => {
       audioRef.current.removeEventListener("ended", () => setIsPlaying(false));
       audioRef.current.pause();
-      // Clear any remaining timeouts
       bootSequence.forEach((_, index) => clearTimeout(index));
+      clearInterval(glitchInterval);
     };
   }, []);
 
@@ -143,17 +165,75 @@ const RetroStripeLandingPage = () => {
     }
   }, [consoleOutput]);
 
+  const handleDrag = (e, ui) => {
+    setConsolePosition({ x: ui.x, y: ui.y });
+  };
+
+  const toggleConsoleSize = () => {
+    setIsConsoleMinimized(!isConsoleMinimized);
+    setConsoleSize(
+      isConsoleMinimized
+        ? { width: 500, height: 300 }
+        : { width: 300, height: 40 }
+    );
+  };
+
+  const closeConsole = () => {
+    setIsConsoleOpen(false);
+  };
+
+  const GlitchText = ({ children }) => (
+    <div className={`relative ${glitchEffect ? "animate-glitch" : ""}`}>
+      <span
+        className="absolute top-0 left-0 text-red-500 opacity-50"
+        style={{ clipPath: "inset(0 0 0 0)" }}
+      >
+        {children}
+      </span>
+      <span
+        className="absolute top-0 left-0 text-blue-500 opacity-50"
+        style={{ clipPath: "inset(0 0 0 0)" }}
+      >
+        {children}
+      </span>
+      {children}
+    </div>
+  );
+
+  const glitchStyles = `
+    @keyframes glitch {
+      0% { transform: translate(0) }
+      20% { transform: translate(-2px, 2px) }
+      40% { transform: translate(-2px, -2px) }
+      60% { transform: translate(2px, 2px) }
+      80% { transform: translate(2px, -2px) }
+      100% { transform: translate(0) }
+    }
+    .animate-glitch {
+      animation: glitch 0.3s infinite;
+    }
+  `;
+
   if (isBooting) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-black text-green-400 font-mono">
-        <div className="text-6xl mb-8">RetroStripe</div>
+        <style>{glitchStyles}</style>
+        <div className="mb-8">
+          <img
+            src="/the_enthusiast_logo.svg"
+            alt="RetroStripe Logo"
+            className="w-64 h-64"
+          />
+        </div>
         <div className="w-64 h-4 bg-gray-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-green-500 transition-all duration-300 ease-linear"
             style={{ width: `${bootProgress}%` }}
           ></div>
         </div>
-        <div className="mt-4">{bootMessage}</div>
+        <GlitchText>
+          <div className="mt-4">{bootMessage}</div>
+        </GlitchText>
         <div className="mt-2">{Math.round(bootProgress)}%</div>
       </div>
     );
@@ -163,6 +243,7 @@ const RetroStripeLandingPage = () => {
     <div
       className={`min-h-screen ${themes[theme].bg} ${themes[theme].text} ${fonts[font]} transition-all duration-300`}
     >
+      <style>{glitchStyles}</style>
       <nav className="flex justify-between items-center p-4 border-b border-gray-700">
         <div className="flex space-x-4">
           <a href="#" className="hover:underline">
@@ -261,35 +342,72 @@ const RetroStripeLandingPage = () => {
       </main>
 
       {isConsoleOpen && (
-        <div
-          ref={terminalRef}
-          className={`fixed bottom-0 left-0 right-0 h-64 ${
-            theme === "dark" ? "bg-black" : "bg-gray-200"
-          } ${themes[theme].text} p-4 overflow-auto font-mono`}
-          style={{
-            boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
-            borderTop: `1px solid ${theme === "dark" ? "#333" : "#ccc"}`,
-          }}
+        <Draggable
+          handle=".console-handle"
+          bounds="parent"
+          position={consolePosition}
+          onDrag={handleDrag}
         >
-          <div className="mb-4">
-            {consoleOutput.map((line, index) => (
-              <p key={index} className="my-1">
-                {line}
-              </p>
-            ))}
+          <div
+            className={`fixed ${
+              theme === "dark" ? "bg-black" : "bg-gray-200"
+            } ${themes[theme].text} rounded-lg overflow-hidden`}
+            style={{
+              width: `${consoleSize.width}px`,
+              height: `${consoleSize.height}px`,
+              boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+              border: `1px solid ${theme === "dark" ? "#333" : "#ccc"}`,
+            }}
+          >
+            <div className="console-handle flex justify-between items-center p-2 bg-gray-800 cursor-move">
+              <span>RetroStripe Terminal</span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={toggleConsoleSize}
+                  className="focus:outline-none"
+                >
+                  {isConsoleMinimized ? (
+                    <Maximize2 size={16} />
+                  ) : (
+                    <Minimize2 size={16} />
+                  )}
+                </button>
+                <button onClick={closeConsole} className="focus:outline-none">
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            {!isConsoleMinimized && (
+              <div
+                ref={terminalRef}
+                className="p-4 overflow-auto"
+                style={{ height: "calc(100% - 40px)" }}
+              >
+                <div className="mb-4">
+                  {consoleOutput.map((line, index) => (
+                    <p key={index} className="my-1">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+                <form
+                  onSubmit={handleConsoleSubmit}
+                  className="flex items-center"
+                >
+                  <span className="mr-2 text-green-500">{">"}</span>
+                  <input
+                    type="text"
+                    value={consoleInput}
+                    onChange={(e) => setConsoleInput(e.target.value)}
+                    className={`flex-grow bg-transparent focus:outline-none ${themes[theme].text}`}
+                    placeholder="Type a command..."
+                    style={{ caretColor: theme === "dark" ? "green" : "black" }}
+                  />
+                </form>
+              </div>
+            )}
           </div>
-          <form onSubmit={handleConsoleSubmit} className="flex items-center">
-            <span className="mr-2 text-green-500">{">"}</span>
-            <input
-              type="text"
-              value={consoleInput}
-              onChange={(e) => setConsoleInput(e.target.value)}
-              className={`flex-grow bg-transparent focus:outline-none ${themes[theme].text}`}
-              placeholder="Type a command..."
-              style={{ caretColor: theme === "dark" ? "green" : "black" }}
-            />
-          </form>
-        </div>
+        </Draggable>
       )}
     </div>
   );
