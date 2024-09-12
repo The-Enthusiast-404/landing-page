@@ -32,15 +32,42 @@ const RetroStripeLandingPage = () => {
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isBooting, setIsBooting] = useState(true);
+  const [bootProgress, setBootProgress] = useState(0);
+  const [bootMessage, setBootMessage] = useState(
+    "Initializing RetroStripe Core..."
+  );
   const audioRef = useRef(null);
   const terminalRef = useRef(null);
 
   useEffect(() => {
     audioRef.current = new Audio(tracks[currentTrack].file);
     audioRef.current.addEventListener("ended", () => setIsPlaying(false));
+
+    const bootSequence = [
+      { message: "Initializing RetroStripe Core...", duration: 1000 },
+      { message: "Loading Retro Fonts...", duration: 800 },
+      { message: "Calibrating Time Circuits...", duration: 1200 },
+      { message: "Engaging Flux Capacitor...", duration: 1000 },
+      { message: "Booting RetroStripe OS...", duration: 1500 },
+    ];
+
+    let totalDuration = 0;
+    bootSequence.forEach((step, index) => {
+      setTimeout(() => {
+        setBootMessage(step.message);
+        setBootProgress(((index + 1) / bootSequence.length) * 100);
+      }, totalDuration);
+      totalDuration += step.duration;
+    });
+
+    setTimeout(() => setIsBooting(false), totalDuration + 500);
+
     return () => {
       audioRef.current.removeEventListener("ended", () => setIsPlaying(false));
       audioRef.current.pause();
+      // Clear any remaining timeouts
+      bootSequence.forEach((_, index) => clearTimeout(index));
     };
   }, []);
 
@@ -111,17 +138,26 @@ const RetroStripeLandingPage = () => {
   };
 
   useEffect(() => {
-    setConsoleOutput([
-      "Welcome to RetroStripe Terminal v1.1",
-      'Type "help" for available commands.',
-    ]);
-  }, []);
-
-  useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [consoleOutput]);
+
+  if (isBooting) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-black text-green-400 font-mono">
+        <div className="text-6xl mb-8">RetroStripe</div>
+        <div className="w-64 h-4 bg-gray-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-green-500 transition-all duration-300 ease-linear"
+            style={{ width: `${bootProgress}%` }}
+          ></div>
+        </div>
+        <div className="mt-4">{bootMessage}</div>
+        <div className="mt-2">{Math.round(bootProgress)}%</div>
+      </div>
+    );
+  }
 
   return (
     <div
