@@ -17,8 +17,32 @@ const themes = {
     bg: "bg-gray-900",
     text: "text-green-400",
     accent: "text-yellow-400",
+    terminal: "bg-black",
   },
-  light: { bg: "bg-gray-100", text: "text-gray-800", accent: "text-blue-600" },
+  light: {
+    bg: "bg-gray-100",
+    text: "text-gray-800",
+    accent: "text-blue-600",
+    terminal: "bg-white",
+  },
+  retro: {
+    bg: "bg-blue-900",
+    text: "text-amber-500",
+    accent: "text-red-500",
+    terminal: "bg-blue-800",
+  },
+  neon: {
+    bg: "bg-purple-900",
+    text: "text-pink-500",
+    accent: "text-cyan-400",
+    terminal: "bg-purple-800",
+  },
+  matrix: {
+    bg: "bg-black",
+    text: "text-green-500",
+    accent: "text-lime-400",
+    terminal: "bg-gray-900",
+  },
 };
 
 const fonts = [
@@ -35,11 +59,52 @@ const tracks = [
   { name: "8-Bit Adventure", file: "/music/retro_funk.mp3" },
 ];
 
+const commands = {
+  help: {
+    description: "List all available commands",
+    usage: "help",
+  },
+  theme: {
+    description: "Change the theme of the page",
+    usage: "theme <theme_name>",
+    subcommands: "Available themes: dark, light, retro, neon, matrix",
+  },
+  font: {
+    description: "Change the font of the page",
+    usage: "font",
+  },
+  clear: {
+    description: "Clear the terminal screen",
+    usage: "clear",
+  },
+  about: {
+    description: "Display information about RetroStripe",
+    usage: "about",
+  },
+  music: {
+    description: "Control music playback",
+    usage: "music <subcommand>",
+    subcommands: "Available subcommands: play, stop, next, prev, list",
+  },
+  goto: {
+    description: "Open external links",
+    usage: "goto <destination>",
+    subcommands: "Available destinations: youtube, github, twitter",
+  },
+  man: {
+    description: "Display the manual for a command",
+    usage: "man <command>",
+  },
+};
+
 const RetroStripeLandingPage = () => {
   const [theme, setTheme] = useState("dark");
   const [font, setFont] = useState(0);
   const [consoleInput, setConsoleInput] = useState("");
-  const [consoleOutput, setConsoleOutput] = useState([]);
+  const [consoleOutput, setConsoleOutput] = useState([
+    "Welcome to RetroStripe Terminal!",
+    'Type "help" to see available commands.',
+  ]);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -96,49 +161,108 @@ const RetroStripeLandingPage = () => {
   const handleConsoleSubmit = (e) => {
     e.preventDefault();
     const input = consoleInput.trim().toLowerCase();
+    const [command, ...args] = input.split(" ");
     let response =
       'Command not recognized. Type "help" for available commands.';
 
-    if (input === "help") {
-      response =
-        "Available commands: theme, font, clear, about, music play, music stop, music next, music prev, music list";
-    } else if (input === "theme") {
-      setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-      response = `Theme changed to ${theme === "dark" ? "light" : "dark"}`;
-    } else if (input === "font") {
-      setFont((prev) => (prev + 1) % fonts.length);
-      response = `Font changed to ${fonts[font]
-        .replace("font-", "")
-        .replace(/["\[\]]/g, "")}`;
-    } else if (input === "clear") {
-      setConsoleOutput([]);
-      setConsoleInput("");
-      return;
-    } else if (input === "about") {
-      response =
-        "RetroStripe v1.1 - A nostalgic twist on modern web payments. Now with music!";
-    } else if (input === "music play") {
-      audioRef.current.play();
-      setIsPlaying(true);
-      response = `Now playing: ${tracks[currentTrack].name}`;
-    } else if (input === "music stop") {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      response = "Music stopped";
-    } else if (input === "music next") {
-      changeTrack((currentTrack + 1) % tracks.length);
-      response = `Switched to: ${tracks[currentTrack].name}`;
-    } else if (input === "music prev") {
-      changeTrack((currentTrack - 1 + tracks.length) % tracks.length);
-      response = `Switched to: ${tracks[currentTrack].name}`;
-    } else if (input === "music list") {
-      response =
-        "Available tracks:\n" +
-        tracks.map((track, index) => `${index + 1}. ${track.name}`).join("\n");
+    switch (command) {
+      case "help":
+        response = "Available commands:\n" + Object.keys(commands).join(", ");
+        break;
+      case "theme":
+        if (args[0] && themes[args[0]]) {
+          setTheme(args[0]);
+          response = `Theme changed to ${args[0]}`;
+        } else {
+          response = `Invalid theme. ${commands.theme.subcommands}`;
+        }
+        break;
+      case "font":
+        setFont((prev) => (prev + 1) % fonts.length);
+        response = `Font changed to ${fonts[font]
+          .replace("font-", "")
+          .replace(/["\[\]]/g, "")}`;
+        break;
+      case "clear":
+        setConsoleOutput([]);
+        setConsoleInput("");
+        return;
+      case "about":
+        response =
+          "RetroStripe v1.2 - A nostalgic twist on modern web payments. Now with enhanced terminal!";
+        break;
+      case "music":
+        response = handleMusicCommand(args[0]);
+        break;
+      case "goto":
+        response = handleGotoCommand(args[0]);
+        break;
+      case "man":
+        response = handleManCommand(args[0]);
+        break;
+      default:
+        break;
     }
 
     setConsoleOutput((prev) => [...prev, `> ${consoleInput}`, response]);
     setConsoleInput("");
+  };
+
+  const handleMusicCommand = (subcommand) => {
+    switch (subcommand) {
+      case "play":
+        audioRef.current.play();
+        setIsPlaying(true);
+        return `Now playing: ${tracks[currentTrack].name}`;
+      case "stop":
+        audioRef.current.pause();
+        setIsPlaying(false);
+        return "Music stopped";
+      case "next":
+        changeTrack((currentTrack + 1) % tracks.length);
+        return `Switched to: ${tracks[currentTrack].name}`;
+      case "prev":
+        changeTrack((currentTrack - 1 + tracks.length) % tracks.length);
+        return `Switched to: ${tracks[currentTrack].name}`;
+      case "list":
+        return (
+          "Available tracks:\n" +
+          tracks.map((track, index) => `${index + 1}. ${track.name}`).join("\n")
+        );
+      default:
+        return `Invalid subcommand. ${commands.music.subcommands}`;
+    }
+  };
+
+  const handleGotoCommand = (destination) => {
+    const urls = {
+      youtube: "https://www.youtube.com",
+      github: "https://github.com",
+      twitter: "https://twitter.com",
+    };
+    if (urls[destination]) {
+      window.open(urls[destination], "_blank");
+      return `Opening ${destination} in a new tab...`;
+    }
+    return `Invalid destination. ${commands.goto.subcommands}`;
+  };
+
+  const handleManCommand = (commandName) => {
+    const command = commands[commandName];
+    if (command) {
+      return `
+        NAME
+            ${commandName} - ${command.description}
+
+        SYNOPSIS
+            ${command.usage}
+
+        DESCRIPTION
+            ${command.description}
+            ${command.subcommands ? `\n        ${command.subcommands}` : ""}
+      `;
+    }
+    return `No manual entry for ${commandName}`;
   };
 
   const changeTrack = (newTrack) => {
@@ -164,23 +288,6 @@ const RetroStripeLandingPage = () => {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [consoleOutput]);
-
-  const handleDrag = (e, ui) => {
-    setConsolePosition({ x: ui.x, y: ui.y });
-  };
-
-  const toggleConsoleSize = () => {
-    setIsConsoleMinimized(!isConsoleMinimized);
-    setConsoleSize(
-      isConsoleMinimized
-        ? { width: 500, height: 300 }
-        : { width: 300, height: 40 }
-    );
-  };
-
-  const closeConsole = () => {
-    setIsConsoleOpen(false);
-  };
 
   const GlitchText = ({ children }) => (
     <div className={`relative ${glitchEffect ? "animate-glitch" : ""}`}>
@@ -346,12 +453,10 @@ const RetroStripeLandingPage = () => {
           handle=".console-handle"
           bounds="parent"
           position={consolePosition}
-          onDrag={handleDrag}
+          onDrag={(e, ui) => setConsolePosition({ x: ui.x, y: ui.y })}
         >
           <div
-            className={`fixed ${
-              theme === "dark" ? "bg-black" : "bg-gray-200"
-            } ${themes[theme].text} rounded-lg overflow-hidden`}
+            className={`fixed ${themes[theme].terminal} ${themes[theme].text} rounded-lg overflow-hidden`}
             style={{
               width: `${consoleSize.width}px`,
               height: `${consoleSize.height}px`,
@@ -363,7 +468,14 @@ const RetroStripeLandingPage = () => {
               <span>RetroStripe Terminal</span>
               <div className="flex space-x-2">
                 <button
-                  onClick={toggleConsoleSize}
+                  onClick={() => {
+                    setIsConsoleMinimized(!isConsoleMinimized);
+                    setConsoleSize(
+                      isConsoleMinimized
+                        ? { width: 500, height: 300 }
+                        : { width: 300, height: 40 }
+                    );
+                  }}
                   className="focus:outline-none"
                 >
                   {isConsoleMinimized ? (
@@ -372,7 +484,10 @@ const RetroStripeLandingPage = () => {
                     <Minimize2 size={16} />
                   )}
                 </button>
-                <button onClick={closeConsole} className="focus:outline-none">
+                <button
+                  onClick={() => setIsConsoleOpen(false)}
+                  className="focus:outline-none"
+                >
                   <X size={16} />
                 </button>
               </div>
@@ -401,7 +516,7 @@ const RetroStripeLandingPage = () => {
                     onChange={(e) => setConsoleInput(e.target.value)}
                     className={`flex-grow bg-transparent focus:outline-none ${themes[theme].text}`}
                     placeholder="Type a command..."
-                    style={{ caretColor: theme === "dark" ? "green" : "black" }}
+                    style={{ caretColor: themes[theme].text }}
                   />
                 </form>
               </div>
