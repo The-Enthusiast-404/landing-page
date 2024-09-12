@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Terminal, Globe, Moon, Sun } from "lucide-react";
+import { Terminal, Globe, Moon, Sun, Volume2, VolumeX } from "lucide-react";
 
 const themes = {
   dark: {
@@ -17,13 +17,32 @@ const fonts = [
   'font-["Courier_Prime"]',
 ];
 
+const tracks = [
+  { name: "Retro Groove", file: "/music/retro_music.mp3" },
+  { name: "Synthwave Dreams", file: "/music/retro_music_arcade.mp3" },
+  { name: "Pixel Memories", file: "/music/retro_game.mp3" },
+  { name: "8-Bit Adventure", file: "/music/retro_funk.mp3" },
+];
+
 const RetroStripeLandingPage = () => {
   const [theme, setTheme] = useState("dark");
   const [font, setFont] = useState(0);
   const [consoleInput, setConsoleInput] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([]);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
   const terminalRef = useRef(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio(tracks[currentTrack].file);
+    audioRef.current.addEventListener("ended", () => setIsPlaying(false));
+    return () => {
+      audioRef.current.removeEventListener("ended", () => setIsPlaying(false));
+      audioRef.current.pause();
+    };
+  }, []);
 
   const handleConsoleSubmit = (e) => {
     e.preventDefault();
@@ -32,7 +51,8 @@ const RetroStripeLandingPage = () => {
       'Command not recognized. Type "help" for available commands.';
 
     if (input === "help") {
-      response = "Available commands: theme, font, clear, about";
+      response =
+        "Available commands: theme, font, clear, about, music play, music stop, music next, music prev, music list";
     } else if (input === "theme") {
       setTheme((prev) => (prev === "dark" ? "light" : "dark"));
       response = `Theme changed to ${theme === "dark" ? "light" : "dark"}`;
@@ -46,16 +66,53 @@ const RetroStripeLandingPage = () => {
       setConsoleInput("");
       return;
     } else if (input === "about") {
-      response = "RetroStripe v1.0 - A nostalgic twist on modern web payments.";
+      response =
+        "RetroStripe v1.1 - A nostalgic twist on modern web payments. Now with music!";
+    } else if (input === "music play") {
+      audioRef.current.play();
+      setIsPlaying(true);
+      response = `Now playing: ${tracks[currentTrack].name}`;
+    } else if (input === "music stop") {
+      audioRef.current.pause();
+      setIsPlaying(false);
+      response = "Music stopped";
+    } else if (input === "music next") {
+      changeTrack((currentTrack + 1) % tracks.length);
+      response = `Switched to: ${tracks[currentTrack].name}`;
+    } else if (input === "music prev") {
+      changeTrack((currentTrack - 1 + tracks.length) % tracks.length);
+      response = `Switched to: ${tracks[currentTrack].name}`;
+    } else if (input === "music list") {
+      response =
+        "Available tracks:\n" +
+        tracks.map((track, index) => `${index + 1}. ${track.name}`).join("\n");
     }
 
     setConsoleOutput((prev) => [...prev, `> ${consoleInput}`, response]);
     setConsoleInput("");
   };
 
+  const changeTrack = (newTrack) => {
+    audioRef.current.pause();
+    setCurrentTrack(newTrack);
+    audioRef.current.src = tracks[newTrack].file;
+    if (isPlaying) {
+      audioRef.current.play();
+    }
+  };
+
+  const toggleMusic = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   useEffect(() => {
     setConsoleOutput([
-      "Welcome to RetroStripe Terminal v1.0",
+      "Welcome to RetroStripe Terminal v1.1",
       'Type "help" for available commands.',
     ]);
   }, []);
@@ -99,6 +156,9 @@ const RetroStripeLandingPage = () => {
             className="focus:outline-none"
           >
             <Terminal size={20} />
+          </button>
+          <button onClick={toggleMusic} className="focus:outline-none">
+            {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
           </button>
           <Globe size={20} />
         </div>
