@@ -333,22 +333,24 @@ const RetroStripeLandingPage = () => {
     ];
 
     return (
-      <div className="relative w-full h-[500px] mb-12 overflow-hidden">
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-5xl perspective-1000">
+      <div className="relative w-full h-[800px] mb-12">
+        <div className="absolute inset-0 flex items-center justify-center">
           {images.map((image, index) => (
             <div
               key={image.src}
-              className={`absolute top-0 left-0 w-4/5 h-auto transition-all duration-500 ease-in-out ${
-                hoveredIndex === index
-                  ? "z-30 scale-110"
-                  : index === 0
-                  ? "z-20 -rotate-6 translate-x-0 translate-y-0"
-                  : index === 1
-                  ? "z-10 rotate-3 translate-x-16 translate-y-8"
-                  : "rotate-12 translate-x-32 translate-y-16"
-              }`}
+              className={`absolute transition-all duration-300 ease-in-out`}
               style={{
-                transformOrigin: "center",
+                width: "700px",
+                height: "420px",
+                top: `${200 + index * 40}px`,
+                left: `calc(50% - 350px + ${index * 40}px)`,
+                zIndex: hoveredIndex === index ? 30 : 20 - index,
+                transform: `rotate(${index * 5 - 5}deg)
+                            ${
+                              hoveredIndex === index
+                                ? "scale(1.05) translateY(-20px)"
+                                : "scale(1)"
+                            }`,
                 boxShadow:
                   "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
               }}
