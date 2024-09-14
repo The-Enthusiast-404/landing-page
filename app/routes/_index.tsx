@@ -321,6 +321,27 @@ const RetroStripeLandingPage = () => {
     }
   `;
 
+  const StackedHeroImages = () => (
+    <div className="relative w-full h-[500px] mb-12 overflow-hidden">
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-5xl">
+        <img
+          src="/blog.png"
+          alt="Blog Homepage"
+          className="absolute top-4 left-0 w-4/5 h-auto object-cover rounded-lg shadow-lg transform -rotate-6 hover:rotate-0 transition-all duration-300 hover:scale-105 z-30"
+        />
+        <img
+          src="/gitbegin.png"
+          alt="GitBegin Screenshot"
+          className="absolute top-8 left-[10%] w-4/5 h-auto object-cover rounded-lg shadow-lg transform rotate-3 hover:rotate-0 transition-all duration-300 hover:scale-105 z-20"
+        />
+        <img
+          src="/textbin.png"
+          alt="TextBin Screenshot"
+          className="absolute top-12 left-[20%] w-4/5 h-auto object-cover rounded-lg shadow-lg transform rotate-12 hover:rotate-0 transition-all duration-300 hover:scale-105 z-10"
+        />
+      </div>
+    </div>
+  );
   if (isBooting) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-black text-green-400 font-mono">
@@ -397,54 +418,15 @@ const RetroStripeLandingPage = () => {
           send payouts, and manage your business online with RetroStripe.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div
-            className={`p-6 rounded-lg ${
-              theme === "dark" ? "bg-gray-800" : "bg-white"
-            } border ${
-              theme === "dark" ? "border-gray-700" : "border-gray-300"
-            }`}
-          >
-            <h2 className="text-2xl font-bold mb-4">
-              RetroStripe CLI: Your Time Machine to Productivity
-            </h2>
-            <p>
-              Journey through time with our CLI. Embrace the green-on-black
-              aesthetic while powering your modern workflow.
-            </p>
-            <div className="mt-4 space-x-2">
-              <span className="px-2 py-1 rounded bg-purple-600 text-white text-sm">
-                YOUTUBE
-              </span>
-              <span className="px-2 py-1 rounded bg-green-600 text-white text-sm">
-                TOOLING
-              </span>
-            </div>
-          </div>
-          <div
-            className={`p-6 rounded-lg ${
-              theme === "dark" ? "bg-gray-800" : "bg-white"
-            } border ${
-              theme === "dark" ? "border-gray-700" : "border-gray-300"
-            }`}
-          >
-            <h2 className="text-2xl font-bold mb-4">
-              RetroConnect: Where Past Meets Future
-            </h2>
-            <p>
-              Experience the flexibility of modern platforms with the charm of
-              retro interfaces. RetroConnect: Because nostalgia never goes out
-              of style.
-            </p>
-            <div className="mt-4 space-x-2">
-              <span className="px-2 py-1 rounded bg-purple-600 text-white text-sm">
-                YOUTUBE
-              </span>
-              <span className="px-2 py-1 rounded bg-blue-600 text-white text-sm">
-                PAYMENTS
-              </span>
-            </div>
-          </div>
+        <StackedHeroImages />
+
+        <div className="mt-12">
+          <h2 className="text-3xl font-bold mb-4">Discover RetroStripe</h2>
+          <p className="text-xl">
+            Experience the perfect blend of retro aesthetics and modern
+            functionality. RetroStripe brings you powerful tools wrapped in
+            nostalgia-inducing interfaces.
+          </p>
         </div>
       </main>
 
