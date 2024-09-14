@@ -78,7 +78,7 @@ const commands = {
     usage: "clear",
   },
   about: {
-    description: "Display information about RetroStripe",
+    description: "Display information about The Enthusiast",
     usage: "about",
   },
   music: {
@@ -97,12 +97,12 @@ const commands = {
   },
 };
 
-const RetroStripeLandingPage = () => {
+const TheEnthusiastLandingPage = () => {
   const [theme, setTheme] = useState("dark");
   const [font, setFont] = useState(0);
   const [consoleInput, setConsoleInput] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([
-    "Welcome to RetroStripe Terminal!",
+    "Welcome to The Enthusiast Terminal!",
     'Type "help" to see available commands.',
   ]);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
@@ -111,7 +111,7 @@ const RetroStripeLandingPage = () => {
   const [isBooting, setIsBooting] = useState(true);
   const [bootProgress, setBootProgress] = useState(0);
   const [bootMessage, setBootMessage] = useState(
-    "Initializing RetroStripe Core..."
+    "Initializing The Enthusiast Core..."
   );
   const [glitchEffect, setGlitchEffect] = useState(false);
   const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
@@ -127,11 +127,11 @@ const RetroStripeLandingPage = () => {
     audioRef.current.addEventListener("ended", () => setIsPlaying(false));
 
     const bootSequence = [
-      { message: "Initializing RetroStripe Core...", duration: 1000 },
+      { message: "Initializing The Enthusiast Core...", duration: 1000 },
       { message: "Loading Retro Fonts...", duration: 800 },
       { message: "Calibrating Time Circuits...", duration: 1200 },
       { message: "Engaging Flux Capacitor...", duration: 1000 },
-      { message: "Booting RetroStripe OS...", duration: 1500 },
+      { message: "Booting The Enthusiast OS...", duration: 1500 },
     ];
 
     let totalDuration = 0;
@@ -191,7 +191,7 @@ const RetroStripeLandingPage = () => {
         return;
       case "about":
         response =
-          "RetroStripe v1.2 - A nostalgic twist on modern web payments. Now with enhanced terminal!";
+          "The Enthusiast v1.2 - A nostalgic twist on modern web payments. Now with enhanced terminal!";
         break;
       case "music":
         response = handleMusicCommand(args[0]);
@@ -333,8 +333,8 @@ const RetroStripeLandingPage = () => {
     ];
 
     return (
-      <div className="relative w-full h-[800px] mb-12">
-        <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-full h-[700px] mb-12">
+        <div className="absolute inset-0 flex items-start justify-center">
           {images.map((image, index) => (
             <div
               key={image.src}
@@ -342,7 +342,7 @@ const RetroStripeLandingPage = () => {
               style={{
                 width: "700px",
                 height: "420px",
-                top: `${200 + index * 40}px`,
+                top: `${50 + index * 40}px`,
                 left: `calc(50% - 350px + ${index * 40}px)`,
                 zIndex: hoveredIndex === index ? 30 : 20 - index,
                 transform: `rotate(${index * 5 - 5}deg)
@@ -376,7 +376,7 @@ const RetroStripeLandingPage = () => {
         <div className="mb-8">
           <img
             src="/the_enthusiast_logo.svg"
-            alt="RetroStripe Logo"
+            alt="The Enthusiast Logo"
             className="w-64 h-64"
           />
         </div>
@@ -438,20 +438,20 @@ const RetroStripeLandingPage = () => {
 
       <main className="container mx-auto px-4 py-12">
         <h1 className={`text-6xl font-bold mb-4 ${themes[theme].accent}`}>
-          RetroStripe.dev
+          Theenthusiast.dev
         </h1>
         <p className="text-xl mb-8">
           Build web and mobile apps with a nostalgic twist. Accept payments,
-          send payouts, and manage your business online with RetroStripe.
+          send payouts, and manage your business online with The Enthusiast.
         </p>
 
         <StackedHeroImages />
 
         <div className="mt-12">
-          <h2 className="text-3xl font-bold mb-4">Discover RetroStripe</h2>
+          <h2 className="text-3xl font-bold mb-4">Discover The Enthusiast</h2>
           <p className="text-xl">
             Experience the perfect blend of retro aesthetics and modern
-            functionality. RetroStripe brings you powerful tools wrapped in
+            functionality. The Enthusiast brings you powerful tools wrapped in
             nostalgia-inducing interfaces.
           </p>
         </div>
@@ -474,7 +474,7 @@ const RetroStripeLandingPage = () => {
             }}
           >
             <div className="console-handle flex justify-between items-center p-2 bg-gray-800 cursor-move">
-              <span>RetroStripe Terminal</span>
+              <span>The Enthusiast Terminal</span>
               <div className="flex space-x-2">
                 <button
                   onClick={() => {
@@ -537,4 +537,4 @@ const RetroStripeLandingPage = () => {
   );
 };
 
-export default RetroStripeLandingPage;
+export default TheEnthusiastLandingPage;
