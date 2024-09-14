@@ -117,7 +117,6 @@ const TheEnthusiastLandingPage = () => {
   const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
   const [consolePosition, setConsolePosition] = useState({ x: 20, y: 20 });
   const [consoleSize, setConsoleSize] = useState({ width: 500, height: 300 });
-  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const audioRef = useRef(null);
   const terminalRef = useRef(null);
@@ -159,6 +158,10 @@ const TheEnthusiastLandingPage = () => {
       clearInterval(glitchInterval);
     };
   }, []);
+
+  useEffect(() => {
+    console.log("isConsoleOpen:", isConsoleOpen);
+  }, [isConsoleOpen]);
 
   const handleConsoleSubmit = (e) => {
     e.preventDefault();
@@ -396,7 +399,7 @@ const TheEnthusiastLandingPage = () => {
 
   return (
     <div
-      className={`min-h-screen ${themes[theme].bg} ${themes[theme].text} ${fonts[font]} transition-all duration-300`}
+      className={`min-h-screen ${themes[theme].bg} ${themes[theme].text} ${fonts[font]} transition-all duration-300 relative`}
     >
       <style>{glitchStyles}</style>
       <nav className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -424,7 +427,10 @@ const TheEnthusiastLandingPage = () => {
             {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <button
-            onClick={() => setIsConsoleOpen(!isConsoleOpen)}
+            onClick={() => {
+              console.log("Terminal button clicked");
+              setIsConsoleOpen((prev) => !prev);
+            }}
             className="focus:outline-none"
           >
             <Terminal size={20} />
@@ -465,12 +471,15 @@ const TheEnthusiastLandingPage = () => {
           onDrag={(e, ui) => setConsolePosition({ x: ui.x, y: ui.y })}
         >
           <div
-            className={`fixed ${themes[theme].terminal} ${themes[theme].text} rounded-lg overflow-hidden`}
+            className={`absolute ${themes[theme].terminal} ${themes[theme].text} rounded-lg overflow-hidden`}
             style={{
               width: `${consoleSize.width}px`,
               height: `${consoleSize.height}px`,
               boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
               border: `1px solid ${theme === "dark" ? "#333" : "#ccc"}`,
+              zIndex: 1000,
+              top: consolePosition.y,
+              left: consolePosition.x,
             }}
           >
             <div className="console-handle flex justify-between items-center p-2 bg-gray-800 cursor-move">
