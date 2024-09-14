@@ -117,6 +117,8 @@ const RetroStripeLandingPage = () => {
   const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
   const [consolePosition, setConsolePosition] = useState({ x: 20, y: 20 });
   const [consoleSize, setConsoleSize] = useState({ width: 500, height: 300 });
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   const audioRef = useRef(null);
   const terminalRef = useRef(null);
 
@@ -321,27 +323,50 @@ const RetroStripeLandingPage = () => {
     }
   `;
 
-  const StackedHeroImages = () => (
-    <div className="relative w-full h-[500px] mb-12 overflow-hidden">
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-5xl">
-        <img
-          src="/blog.png"
-          alt="Blog Homepage"
-          className="absolute top-4 left-0 w-4/5 h-auto object-cover rounded-lg shadow-lg transform -rotate-6 hover:rotate-0 transition-all duration-300 hover:scale-105 z-30"
-        />
-        <img
-          src="/gitbegin.png"
-          alt="GitBegin Screenshot"
-          className="absolute top-8 left-[10%] w-4/5 h-auto object-cover rounded-lg shadow-lg transform rotate-3 hover:rotate-0 transition-all duration-300 hover:scale-105 z-20"
-        />
-        <img
-          src="/textbin.png"
-          alt="TextBin Screenshot"
-          className="absolute top-12 left-[20%] w-4/5 h-auto object-cover rounded-lg shadow-lg transform rotate-12 hover:rotate-0 transition-all duration-300 hover:scale-105 z-10"
-        />
+  const StackedHeroImages = () => {
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
+    const images = [
+      { src: "/blog.png", alt: "Blog Homepage" },
+      { src: "/gitbegin.png", alt: "GitBegin Screenshot" },
+      { src: "/textbin.png", alt: "TextBin Screenshot" },
+    ];
+
+    return (
+      <div className="relative w-full h-[500px] mb-12 overflow-hidden">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-5xl perspective-1000">
+          {images.map((image, index) => (
+            <div
+              key={image.src}
+              className={`absolute top-0 left-0 w-4/5 h-auto transition-all duration-500 ease-in-out ${
+                hoveredIndex === index
+                  ? "z-30 scale-110"
+                  : index === 0
+                  ? "z-20 -rotate-6 translate-x-0 translate-y-0"
+                  : index === 1
+                  ? "z-10 rotate-3 translate-x-16 translate-y-8"
+                  : "rotate-12 translate-x-32 translate-y-16"
+              }`}
+              style={{
+                transformOrigin: "center",
+                boxShadow:
+                  "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
+              }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
   if (isBooting) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-black text-green-400 font-mono">
